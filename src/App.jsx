@@ -105,7 +105,7 @@ function App() {
   ]
 
   const currentDrinkInfo = selectedDrinks.length > 0 ? selectedDrinks[currentDrink - 1] : drinks[0]
-  const cupFillPercentage = (currentQuestion / 10) * 100
+  const cupFillPercentage = (currentQuestion / 13) * 100
   
   // Helper to get custom drink color or gradient
   const getCustomDrinkBackground = () => {
@@ -196,42 +196,56 @@ function App() {
 
   // Generate a new multiplication question based on current day
   const generateQuestion = () => {
-    let min, max
+    let num1, num2
     
-    // Set multiplication range based on current day
+    // Set multiplication practice based on current day
     switch(currentDay) {
       case 1:
-        min = 1
-        max = 5
+        // Day 1: 4 times table, multipliers 1-6
+        num1 = 4
+        num2 = Math.floor(Math.random() * 6) + 1
         break
       case 2:
-        min = 5
-        max = 7
+        // Day 2: 4 times table, multipliers 1-10
+        num1 = 4
+        num2 = Math.floor(Math.random() * 10) + 1
         break
       case 3:
-        min = 1
-        max = 7
+        // Day 3: 4 times table, multipliers 1-10
+        num1 = 4
+        num2 = Math.floor(Math.random() * 10) + 1
         break
       case 4:
-        min = 7
-        max = 11
+        // Day 4: 4 times table, multipliers 1-10
+        num1 = 4
+        num2 = Math.floor(Math.random() * 10) + 1
         break
       case 5:
-        min = 5
-        max = 11
+        // Day 5: 3 and 4 times tables (4 always first)
+        const tables = [3, 4]
+        num1 = tables[Math.floor(Math.random() * 2)]
+        num2 = Math.floor(Math.random() * 10) + 1
+        if (Math.random() < 0.5 && num1 === 3) {
+          // Swap to ensure 4 is first sometimes, but also practice 3
+          [num1, num2] = [num2, num1]
+        }
         break
       case 6:
       case 7:
-        min = 1
-        max = 11
+        // Day 6 & 7: Tables 1, 2, 3, 4, 10, 11, 0 (4 always first)
+        const tablesDay67 = [1, 2, 3, 4, 10, 11, 0]
+        num1 = tablesDay67[Math.floor(Math.random() * tablesDay67.length)]
+        num2 = Math.floor(Math.random() * 10) + 1
+        // Prioritize 4 times table to be first
+        if (Math.random() < 0.3) {
+          num1 = 4
+        }
         break
       default:
-        min = 1
-        max = 11
+        num1 = 4
+        num2 = Math.floor(Math.random() * 10) + 1
     }
     
-    const num1 = Math.floor(Math.random() * (max - min + 1)) + min
-    const num2 = Math.floor(Math.random() * (max - min + 1)) + min
     const answer = num1 * num2
     setQuestion({ num1, num2, answer })
   }
@@ -302,8 +316,8 @@ function App() {
       // Check if we need to play toppings sound
       const nextQuestion = currentQuestion + 1
       if (currentDrinkInfo.hasFruit || currentDrinkInfo.hasLabubu) {
-        // For labubu, play at questions 3, 7, 10
-        if (currentDrinkInfo.hasLabubu && (nextQuestion === 3 || nextQuestion === 7 || nextQuestion === 10)) {
+        // For labubu, play at questions 4, 9, 13
+        if (currentDrinkInfo.hasLabubu && (nextQuestion === 4 || nextQuestion === 9 || nextQuestion === 13)) {
           setTimeout(() => playToppingsSound(), 300)
         }
         // For fruit, play on every question
@@ -312,7 +326,7 @@ function App() {
         }
       }
       
-      if (currentQuestion < 10) {
+      if (currentQuestion < 13) {
         setTimeout(() => {
           setCurrentQuestion(currentQuestion + 1)
           setFeedback('')
@@ -329,7 +343,7 @@ function App() {
   }
 
   const serveDrink = () => {
-    if (currentQuestion === 10) {
+    if (currentQuestion === 13) {
       if (currentDrink < 3) {
         setCurrentDrink(currentDrink + 1)
         setCurrentQuestion(1)
@@ -865,7 +879,7 @@ function App() {
           Restart Week
         </button>
         <div className="cafe-header">
-          <h1>☕ Multiplication Café ☕</h1>
+          <h1>☕ Evelyn's Multiplication Café ☕</h1>
           <p className="tagline">Serve drinks, practice multiplication!</p>
         </div>
         <div className="days-container">
@@ -1106,14 +1120,14 @@ function App() {
                 )}
               </div>
               <div className="cup-glass"></div>
-              {currentDrinkInfo.hasLabubu && currentQuestion === 10 && (
+              {currentDrinkInfo.hasLabubu && currentQuestion === 13 && (
                 <img 
                   src={`${baseUrl}assets/_dubai_chocolate.png`} 
                   alt="Dubai Chocolate Topper" 
                   className="cup-topper"
                 />
               )}
-              {currentDrinkInfo.isCustom && currentDrinkInfo.customData?.toppings.includes('sprinkles') && currentQuestion === 10 && (
+              {currentDrinkInfo.isCustom && currentDrinkInfo.customData?.toppings.includes('sprinkles') && currentQuestion === 13 && (
                 <img 
                   src={`${baseUrl}assets/sprinkles.png`} 
                   alt="Sprinkles Topper" 
@@ -1124,7 +1138,7 @@ function App() {
             <div className="progress-text">{currentQuestion}/10 questions</div>
           </div>
 
-          {currentQuestion === 10 && (
+          {currentQuestion === 13 && (
             <button className="serve-button" onClick={serveDrink}>
               {currentDrink === 3 ? 'Close Cafe' : 'Serve Drink →'}
             </button>
@@ -1133,7 +1147,7 @@ function App() {
 
         <div className="question-area">
           <div className="question-card">
-            {currentQuestion === 10 ? (
+            {currentQuestion === 13 ? (
               <div className="well-done-message">
                 {currentDrink < 3 ? (
                   <>
@@ -1227,12 +1241,12 @@ function App() {
                     placeholder="Type your answer..."
                     className="answer-input"
                     autoFocus
-                    disabled={currentQuestion === 10}
+                    disabled={currentQuestion === 13}
                   />
                   <button 
                     type="submit" 
                     className="submit-button"
-                    disabled={currentQuestion === 10 || answer === '' || (lastWrongAnswer !== null && answer === lastWrongAnswer)}
+                    disabled={currentQuestion === 13 || answer === '' || (lastWrongAnswer !== null && answer === lastWrongAnswer)}
                   >
                     Check Answer
                   </button>
