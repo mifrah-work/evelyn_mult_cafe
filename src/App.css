@@ -1473,3 +1473,82 @@ form {
     0 8px 20px rgba(0, 0, 0, 0.5),
     inset 0 1px 2px rgba(255, 255, 255, 0.4);
 }
+
+.week-complete-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+  position: relative;
+}
+
+.week-complete-sign {
+  flex-shrink: 0;
+}
+
+.evelyn-celebration {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.evelyn-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.evelyn-image {
+  height: 320px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  z-index: 1;
+}
+
+.celebration-drink {
+  width: 110px;
+  height: 160px;
+  border-radius: 0 0 24px 24px;
+  border: 3px solid #8B4513;
+  position: absolute;
+  top: 140px;
+  left: 180px;
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  transform: rotate(25deg);
+  z-index: 2;
+}
+
+.celebration-drink .boba-ball-preview,
+.celebration-drink .labubu-preview,
+.celebration-drink .fruit-piece-preview,
+.celebration-drink .sprinkles-topper-preview {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.celebration-drink .sprinkles-topper-preview {
+  width: 100%;
+  height: auto;
+  top: 0;
+  left: 0;
+  animation: none;
+}
+
+.custom-drink-label {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: #FFE4B5;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 
+    2px 2px 3px rgba(0, 0, 0, 0.6),
+    0 0 15px rgba(255, 215, 0, 0.2);
+  font-family: 'Georgia', serif;
+}

@@ -98,7 +98,7 @@ function App() {
     { name: 'Chocolate Milkshake', color: '#5C4033', unlockDay: 0 },
     { name: 'Strawberry Milkshake', color: '#FFB6C1', unlockDay: 1, hasFruit: 'strawberry' },
     { name: 'Rainbow Drink', color: '#FFB3BA', hasRainbow: true, unlockDay: 2 },
-    { name: 'Mango Lassi', color: '#FFD966', unlockDay: 3, hasFruit: 'mango' },
+    { name: 'Bluey Drink', color: '#BAE1FF', unlockDay: 3, hasFruit: 'bluey' },
     { name: 'Boba Tea', color: '#D2691E', hasBoba: true, unlockDay: 4 },
     { name: 'Labubu Dubai Chocolate Matcha', color: '#88C57F', hasLabubu: true, unlockDay: 5 },
     { name: 'Make Your Own Drink', color: 'transparent', unlockDay: 6, isCustom: true, customData: customDrink }
@@ -437,7 +437,7 @@ function App() {
       { id: 'labubu1', label: 'Labubu 1', type: 'labubu', image: `${baseUrl}assets/labubu_1.png` },
       { id: 'labubu2', label: 'Labubu 2', type: 'labubu', image: `${baseUrl}assets/labubu_2.png` },
       { id: 'labubu3', label: 'Labubu 3', type: 'labubu', image: `${baseUrl}assets/labubu_3.png` },
-      { id: 'mango', label: 'Mango', type: 'fruit', image: `${baseUrl}assets/mango.png` },
+      { id: 'bluey', label: 'Bluey', type: 'fruit', image: `${baseUrl}assets/bluey.png` },
       { id: 'strawberry', label: 'Strawberry', type: 'fruit', image: `${baseUrl}assets/strawberry.png` },
       { id: 'sprinkles', label: 'Sprinkles', type: 'sprinkles', image: `${baseUrl}assets/sprinkles.png` }
     ]
@@ -565,11 +565,11 @@ function App() {
                     )}
                   </div>
                 )}
-                {(customDrink.toppings.includes('mango') || customDrink.toppings.includes('strawberry')) && (
+                {(customDrink.toppings.includes('bluey') || customDrink.toppings.includes('strawberry')) && (
                   <div className="fruit-preview-container">
                     {Array.from({ length: 4 }).map((_, idx) => {
                       const fruits = []
-                      if (customDrink.toppings.includes('mango')) fruits.push('mango')
+                      if (customDrink.toppings.includes('bluey')) fruits.push('bluey')
                       if (customDrink.toppings.includes('strawberry')) fruits.push('strawberry')
                       const fruit = fruits[idx % fruits.length]
                       return (
@@ -816,11 +816,11 @@ function App() {
                             )}
                           </div>
                         )}
-                        {(customDrink.toppings.includes('mango') || customDrink.toppings.includes('strawberry')) && (
+                        {(customDrink.toppings.includes('bluey') || customDrink.toppings.includes('strawberry')) && (
                           <div className="fruit-preview-container">
                             {Array.from({ length: 6 }).map((_, idx) => {
                               const fruits = []
-                              if (customDrink.toppings.includes('mango')) fruits.push('mango')
+                              if (customDrink.toppings.includes('bluey')) fruits.push('bluey')
                               if (customDrink.toppings.includes('strawberry')) fruits.push('strawberry')
                               const fruit = fruits[idx % fruits.length]
                               return (
@@ -913,12 +913,114 @@ function App() {
   if (gameState === 'dayComplete') {
     return (
       <div className="app home-screen">
-        <div className="complete-screen">
-          <h1>🎉 Day {currentDay} Complete! 🎉</h1>
-          <p>You've successfully served all 3 drinks!</p>
-          <button className="home-button" onClick={goHome}>
-            Return to Café
-          </button>
+        <div className="week-complete-overlay">
+          <div className="week-complete-container">
+            <div className="week-complete-sign">
+              <div className="sign-border">
+                <h1 className="week-complete-title">🎉 Day {currentDay} Complete! 🎉</h1>
+                <p className="week-complete-subtitle">You've successfully served all 3 drinks!</p>
+                
+                <button className="home-button" onClick={goHome}>
+                  Return to Café
+                </button>
+              </div>
+            </div>
+            
+            <div className="evelyn-celebration">
+              <div className="evelyn-wrapper">
+                <div 
+                  className="celebration-drink" 
+                  style={{ 
+                    background: customDrink.colors.length === 1 
+                      ? customDrink.colors[0] 
+                      : `linear-gradient(to top, ${customDrink.colors.join(', ')})`
+                  }}
+                >
+                  {customDrink.toppings.includes('boba') && (
+                    <div className="boba-preview-container">
+                      {Array.from({ length: 4 }).map((_, idx) => (
+                        <div 
+                          key={idx} 
+                          className="boba-ball-preview"
+                          style={{
+                            left: `${20 + (idx % 2) * 40}%`,
+                            bottom: `${15 + Math.floor(idx / 2) * 30}%`,
+                            animationDelay: `${idx * 0.3}s`
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  {(customDrink.toppings.includes('labubu1') || 
+                    customDrink.toppings.includes('labubu2') || 
+                    customDrink.toppings.includes('labubu3')) && (
+                    <div className="labubu-preview-container">
+                      {customDrink.toppings.includes('labubu1') && (
+                        <img 
+                          src={`${baseUrl}assets/labubu_1.png`} 
+                          alt="labubu" 
+                          className="labubu-preview"
+                          style={{ left: '30%', bottom: '40%' }}
+                        />
+                      )}
+                      {customDrink.toppings.includes('labubu2') && (
+                        <img 
+                          src={`${baseUrl}assets/labubu_2.png`} 
+                          alt="labubu" 
+                          className="labubu-preview"
+                          style={{ left: '50%', bottom: '30%' }}
+                        />
+                      )}
+                      {customDrink.toppings.includes('labubu3') && (
+                        <img 
+                          src={`${baseUrl}assets/labubu_3.png`} 
+                          alt="labubu" 
+                          className="labubu-preview"
+                          style={{ left: '20%', bottom: '20%' }}
+                        />
+                      )}
+                    </div>
+                  )}
+                  {(customDrink.toppings.includes('bluey') || customDrink.toppings.includes('strawberry')) && (
+                    <div className="fruit-preview-container">
+                      {Array.from({ length: 4 }).map((_, idx) => {
+                        const fruits = []
+                        if (customDrink.toppings.includes('bluey')) fruits.push('bluey')
+                        if (customDrink.toppings.includes('strawberry')) fruits.push('strawberry')
+                        const fruit = fruits[idx % fruits.length]
+                        return (
+                          <img 
+                            key={idx}
+                            src={`${baseUrl}assets/${fruit}.png`}
+                            alt={fruit}
+                            className="fruit-piece-preview"
+                            style={{
+                              left: `${20 + (idx % 2) * 40}%`,
+                              bottom: `${15 + Math.floor(idx / 2) * 35}%`,
+                              animationDelay: `${idx * 0.2}s`
+                            }}
+                          />
+                        )
+                      })}
+                    </div>
+                  )}
+                  {customDrink.toppings.includes('sprinkles') && (
+                    <img 
+                      src={`${baseUrl}assets/sprinkles.png`} 
+                      alt="Sprinkles" 
+                      className="sprinkles-topper-preview"
+                    />
+                  )}
+                </div>
+                <img 
+                  src={`${baseUrl}assets/Evelyn.png`} 
+                  alt="Evelyn" 
+                  className="evelyn-image"
+                />
+                <p className="custom-drink-label">This Week's Special: Evelyn's {customDrink.name}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -928,17 +1030,115 @@ function App() {
     return (
       <div className="app home-screen">
         <div className="week-complete-overlay">
-          <div className="week-complete-sign">
-            <div className="sign-border">
-              <h1 className="week-complete-title">Well Done Working A Week</h1>
-              <h1 className="week-complete-title">At The Multiplication Café!</h1>
-              <p className="week-complete-subtitle">See you soon ☕</p>
-              <div className="screenshot-reminder">
-                <p>Take a screenshot of this page and send to Mifrah!</p>
+          <div className="week-complete-container">
+            <div className="week-complete-sign">
+              <div className="sign-border">
+                <h1 className="week-complete-title">Well Done Working A Week</h1>
+                <h1 className="week-complete-title">At The Multiplication Café!</h1>
+                <p className="week-complete-subtitle">See you soon ☕</p>
+                
+                <div className="screenshot-reminder">
+                  <p>Take a screenshot of this page and send to Mifrah!</p>
+                </div>
+                <button className="home-button" onClick={goHome}>
+                  Return to Café
+                </button>
               </div>
-              <button className="home-button" onClick={goHome}>
-                Return to Café
-              </button>
+            </div>
+            
+            <div className="evelyn-celebration">
+              <div className="evelyn-wrapper">
+                <div 
+                  className="celebration-drink" 
+                  style={{ 
+                    background: customDrink.colors.length === 1 
+                      ? customDrink.colors[0] 
+                      : `linear-gradient(to top, ${customDrink.colors.join(', ')})`
+                  }}
+                >
+                  {customDrink.toppings.includes('boba') && (
+                    <div className="boba-preview-container">
+                      {Array.from({ length: 4 }).map((_, idx) => (
+                        <div 
+                          key={idx} 
+                          className="boba-ball-preview"
+                          style={{
+                            left: `${20 + (idx % 2) * 40}%`,
+                            bottom: `${15 + Math.floor(idx / 2) * 30}%`,
+                            animationDelay: `${idx * 0.3}s`
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  {(customDrink.toppings.includes('labubu1') || 
+                    customDrink.toppings.includes('labubu2') || 
+                    customDrink.toppings.includes('labubu3')) && (
+                    <div className="labubu-preview-container">
+                      {customDrink.toppings.includes('labubu1') && (
+                        <img 
+                          src={`${baseUrl}assets/labubu_1.png`} 
+                          alt="labubu" 
+                          className="labubu-preview"
+                          style={{ left: '30%', bottom: '40%' }}
+                        />
+                      )}
+                      {customDrink.toppings.includes('labubu2') && (
+                        <img 
+                          src={`${baseUrl}assets/labubu_2.png`} 
+                          alt="labubu" 
+                          className="labubu-preview"
+                          style={{ left: '50%', bottom: '30%' }}
+                        />
+                      )}
+                      {customDrink.toppings.includes('labubu3') && (
+                        <img 
+                          src={`${baseUrl}assets/labubu_3.png`} 
+                          alt="labubu" 
+                          className="labubu-preview"
+                          style={{ left: '20%', bottom: '20%' }}
+                        />
+                      )}
+                    </div>
+                  )}
+                  {(customDrink.toppings.includes('bluey') || customDrink.toppings.includes('strawberry')) && (
+                    <div className="fruit-preview-container">
+                      {Array.from({ length: 4 }).map((_, idx) => {
+                        const fruits = []
+                        if (customDrink.toppings.includes('bluey')) fruits.push('bluey')
+                        if (customDrink.toppings.includes('strawberry')) fruits.push('strawberry')
+                        const fruit = fruits[idx % fruits.length]
+                        return (
+                          <img 
+                            key={idx}
+                            src={`${baseUrl}assets/${fruit}.png`}
+                            alt={fruit}
+                            className="fruit-piece-preview"
+                            style={{
+                              left: `${20 + (idx % 2) * 40}%`,
+                              bottom: `${15 + Math.floor(idx / 2) * 35}%`,
+                              animationDelay: `${idx * 0.2}s`
+                            }}
+                          />
+                        )
+                      })}
+                    </div>
+                  )}
+                  {customDrink.toppings.includes('sprinkles') && (
+                    <img 
+                      src={`${baseUrl}assets/sprinkles.png`} 
+                      alt="Sprinkles" 
+                      className="sprinkles-topper-preview"
+                    />
+                  )}
+                </div>
+                <img 
+                  src={`${baseUrl}assets/Evelyn.png`} 
+                  alt="Evelyn" 
+                  className="evelyn-image"
+                />
+                <p className="custom-drink-label">This Week's Special: Evelyn's {customDrink.name}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -1092,12 +1292,12 @@ function App() {
                         )}
                       </div>
                     )}
-                    {(currentDrinkInfo.customData.toppings.includes('mango') || 
+                    {(currentDrinkInfo.customData.toppings.includes('bluey') || 
                       currentDrinkInfo.customData.toppings.includes('strawberry')) && (
                       <div className="fruit-container">
                         {Array.from({ length: currentQuestion }).map((_, idx) => {
                           const fruits = []
-                          if (currentDrinkInfo.customData.toppings.includes('mango')) fruits.push('mango')
+                          if (currentDrinkInfo.customData.toppings.includes('bluey')) fruits.push('bluey')
                           if (currentDrinkInfo.customData.toppings.includes('strawberry')) fruits.push('strawberry')
                           const fruit = fruits[idx % fruits.length]
                           return (
