@@ -13,19 +13,19 @@ function App() {
   const [feedback, setFeedback] = useState('')
   const [shake, setShake] = useState(false)
   const [completedDays, setCompletedDays] = useState(() => {
-    const saved = localStorage.getItem('divisionCafeCompletedDays')
+    const saved = localStorage.getItem('multiplicationCafeCompletedDays')
     return saved ? JSON.parse(saved) : []
   })
   const [lastWrongAnswer, setLastWrongAnswer] = useState(null)
   const [selectedDrinks, setSelectedDrinks] = useState([])
   const [unlockedDrinks, setUnlockedDrinks] = useState(() => {
-    const saved = localStorage.getItem('divisionCafeUnlockedDrinks')
+    const saved = localStorage.getItem('multiplicationCafeUnlockedDrinks')
     return saved ? JSON.parse(saved) : ['Coffee', 'Matcha Latte', 'Chocolate Milkshake']
   })
   const [newlyUnlockedDrink, setNewlyUnlockedDrink] = useState(null)
   const [customizingDrink, setCustomizingDrink] = useState(false)
   const [customDrink, setCustomDrink] = useState(() => {
-    const saved = localStorage.getItem('divisionCafeCustomDrink')
+    const saved = localStorage.getItem('multiplicationCafeCustomDrink')
     if (saved) {
       const parsed = JSON.parse(saved)
       // Handle old format with single color
@@ -50,24 +50,24 @@ function App() {
 
   // Save to localStorage whenever completedDays changes
   useEffect(() => {
-    localStorage.setItem('divisionCafeCompletedDays', JSON.stringify(completedDays))
+    localStorage.setItem('multiplicationCafeCompletedDays', JSON.stringify(completedDays))
   }, [completedDays])
 
   // Save to localStorage whenever unlockedDrinks changes
   useEffect(() => {
-    localStorage.setItem('divisionCafeUnlockedDrinks', JSON.stringify(unlockedDrinks))
+    localStorage.setItem('multiplicationCafeUnlockedDrinks', JSON.stringify(unlockedDrinks))
   }, [unlockedDrinks])
 
   // Save to localStorage whenever customDrink changes
   useEffect(() => {
-    localStorage.setItem('divisionCafeCustomDrink', JSON.stringify(customDrink))
+    localStorage.setItem('multiplicationCafeCustomDrink', JSON.stringify(customDrink))
   }, [customDrink])
 
   const restartWeek = () => {
     if (window.confirm('Are you sure you want to restart the week? All progress will be lost.')) {
-      localStorage.removeItem('divisionCafeCompletedDays')
-      localStorage.removeItem('divisionCafeUnlockedDrinks')
-      localStorage.removeItem('divisionCafeCustomDrink')
+      localStorage.removeItem('multiplicationCafeCompletedDays')
+      localStorage.removeItem('multiplicationCafeUnlockedDrinks')
+      localStorage.removeItem('multiplicationCafeCustomDrink')
       setCompletedDays([])
       setUnlockedDrinks(['Coffee', 'Matcha Latte', 'Chocolate Milkshake'])
       setCustomDrink({
@@ -194,45 +194,45 @@ function App() {
     }
   }, [gameState])
 
-  // Generate a new division question based on current day
+  // Generate a new multiplication question based on current day
   const generateQuestion = () => {
-    let minDivisor, maxDivisor
+    let min, max
     
-    // Set divisor range based on current day
+    // Set multiplication range based on current day
     switch(currentDay) {
       case 1:
-        minDivisor = 1
-        maxDivisor = 3
+        min = 1
+        max = 5
         break
       case 2:
-        minDivisor = 3
-        maxDivisor = 5
+        min = 5
+        max = 7
         break
       case 3:
-        minDivisor = 1
-        maxDivisor = 5
+        min = 1
+        max = 7
         break
       case 4:
-        minDivisor = 6
-        maxDivisor = 8
+        min = 7
+        max = 11
         break
       case 5:
-        minDivisor = 6
-        maxDivisor = 10
+        min = 5
+        max = 11
         break
       case 6:
       case 7:
-        minDivisor = 1
-        maxDivisor = 10
+        min = 1
+        max = 11
         break
       default:
-        minDivisor = 1
-        maxDivisor = 10
+        min = 1
+        max = 11
     }
     
-    const num2 = Math.floor(Math.random() * (maxDivisor - minDivisor + 1)) + minDivisor
-    const answer = Math.floor(Math.random() * 10) + 1
-    const num1 = num2 * answer
+    const num1 = Math.floor(Math.random() * (max - min + 1)) + min
+    const num2 = Math.floor(Math.random() * (max - min + 1)) + min
+    const answer = num1 * num2
     setQuestion({ num1, num2, answer })
   }
 
@@ -865,8 +865,8 @@ function App() {
           Restart Week
         </button>
         <div className="cafe-header">
-          <h1>☕ Division Café ☕</h1>
-          <p className="tagline">Serve drinks, practice division!</p>
+          <h1>☕ Multiplication Café ☕</h1>
+          <p className="tagline">Serve drinks, practice multiplication!</p>
         </div>
         <div className="days-container">
           <h2>Choose Your Day</h2>
@@ -917,7 +917,7 @@ function App() {
           <div className="week-complete-sign">
             <div className="sign-border">
               <h1 className="week-complete-title">Well Done Working A Week</h1>
-              <h1 className="week-complete-title">At The Division Café!</h1>
+              <h1 className="week-complete-title">At The Multiplication Café!</h1>
               <p className="week-complete-subtitle">See you soon ☕</p>
               <div className="screenshot-reminder">
                 <p>Take a screenshot of this page and send to Mifrah!</p>
@@ -1214,9 +1214,9 @@ function App() {
               </div>
             ) : (
               <>
-                <h3>Division Question</h3>
+                <h3>Multiplication Question</h3>
                 <div className="question-text">
-                  {question.num1} ÷ {question.num2} = ?
+                  {question.num1} × {question.num2} = ?
                 </div>
                 
                 <form onSubmit={handleSubmit} className={shake ? 'shake' : ''}>
