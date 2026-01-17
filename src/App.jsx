@@ -1135,7 +1135,7 @@ function App() {
                 />
               )}
             </div>
-            <div className="progress-text">{currentQuestion}/10 questions</div>
+            <div className="progress-text">{currentQuestion}/13 questions</div>
           </div>
 
           {currentQuestion === 13 && (
