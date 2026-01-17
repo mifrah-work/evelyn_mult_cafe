@@ -124,6 +124,9 @@ function App() {
     return `linear-gradient(to top, ${colorsToShow.join(', ')})`
   }
 
+  // Base URL for assets (works locally and on GitHub Pages)
+  const baseUrl = import.meta.env.BASE_URL
+
   // Audio effects
   const bgMusicRef = React.useRef(null)
   const endingMusicRef = React.useRef(null)
@@ -132,7 +135,7 @@ function App() {
   useEffect(() => {
     if (gameState === 'selectDrinks' || gameState === 'playing') {
       if (!bgMusicRef.current) {
-        bgMusicRef.current = new Audio('/assets/bg.mp3')
+        bgMusicRef.current = new Audio(`${baseUrl}assets/bg.mp3`)
         bgMusicRef.current.loop = true
         bgMusicRef.current.volume = 0.3 // Quiet volume
       }
@@ -152,7 +155,7 @@ function App() {
   useEffect(() => {
     if (gameState === 'weekComplete') {
       if (!endingMusicRef.current) {
-        endingMusicRef.current = new Audio('/assets/ending.mp3')
+        endingMusicRef.current = new Audio(`${baseUrl}assets/ending.mp3`)
         endingMusicRef.current.volume = 0.5
       }
       endingMusicRef.current.play().catch(err => console.log('Ending audio play failed:', err))
@@ -167,19 +170,19 @@ function App() {
   }, [gameState])
 
   const playPourSound = () => {
-    const pourAudio = new Audio('/assets/pour.MP3')
+    const pourAudio = new Audio(`${baseUrl}assets/pour.MP3`)
     pourAudio.volume = 0.5
     pourAudio.play().catch(err => console.log('Pour sound failed:', err))
   }
 
   const playToppingsSound = () => {
-    const toppingsAudio = new Audio('/assets/toppings.mp3')
+    const toppingsAudio = new Audio(`${baseUrl}assets/toppings.mp3`)
     toppingsAudio.volume = 0.5
     toppingsAudio.play().catch(err => console.log('Toppings sound failed:', err))
   }
 
   const playWinSound = () => {
-    const winAudio = new Audio('/assets/win.mp3')
+    const winAudio = new Audio(`${baseUrl}assets/win.mp3`)
     winAudio.volume = 0.6
     winAudio.play().catch(err => console.log('Win sound failed:', err))
   }
@@ -417,12 +420,12 @@ function App() {
     const colorOptions = ['#FFB6C1', '#88C57F', '#FFD966', '#D2691E', '#bd967a', '#5C4033', '#BAE1FF', '#E0BBE4', '#FFDFBA', '#BAFFC9']
     const toppingOptions = [
       { id: 'boba', label: 'Boba Balls', type: 'boba' },
-      { id: 'labubu1', label: 'Labubu 1', type: 'labubu', image: '/assets/labubu_1.png' },
-      { id: 'labubu2', label: 'Labubu 2', type: 'labubu', image: '/assets/labubu_2.png' },
-      { id: 'labubu3', label: 'Labubu 3', type: 'labubu', image: '/assets/labubu_3.png' },
-      { id: 'mango', label: 'Mango', type: 'fruit', image: '/assets/mango.png' },
-      { id: 'strawberry', label: 'Strawberry', type: 'fruit', image: '/assets/strawberry.png' },
-      { id: 'sprinkles', label: 'Sprinkles', type: 'sprinkles', image: '/assets/sprinkles.png' }
+      { id: 'labubu1', label: 'Labubu 1', type: 'labubu', image: `${baseUrl}assets/labubu_1.png` },
+      { id: 'labubu2', label: 'Labubu 2', type: 'labubu', image: `${baseUrl}assets/labubu_2.png` },
+      { id: 'labubu3', label: 'Labubu 3', type: 'labubu', image: `${baseUrl}assets/labubu_3.png` },
+      { id: 'mango', label: 'Mango', type: 'fruit', image: `${baseUrl}assets/mango.png` },
+      { id: 'strawberry', label: 'Strawberry', type: 'fruit', image: `${baseUrl}assets/strawberry.png` },
+      { id: 'sprinkles', label: 'Sprinkles', type: 'sprinkles', image: `${baseUrl}assets/sprinkles.png` }
     ]
 
     return (
@@ -524,7 +527,7 @@ function App() {
                   <div className="labubu-preview-container">
                     {customDrink.toppings.includes('labubu1') && (
                       <img 
-                        src="/assets/labubu_1.png" 
+                        src={`${baseUrl}assets/labubu_1.png`} 
                         alt="labubu" 
                         className="labubu-preview"
                         style={{ left: '30%', bottom: '40%' }}
@@ -532,7 +535,7 @@ function App() {
                     )}
                     {customDrink.toppings.includes('labubu2') && (
                       <img 
-                        src="/assets/labubu_2.png" 
+                        src={`${baseUrl}assets/labubu_2.png`} 
                         alt="labubu" 
                         className="labubu-preview"
                         style={{ left: '50%', bottom: '30%' }}
@@ -540,7 +543,7 @@ function App() {
                     )}
                     {customDrink.toppings.includes('labubu3') && (
                       <img 
-                        src="/assets/labubu_3.png" 
+                        src={`${baseUrl}assets/labubu_3.png`} 
                         alt="labubu" 
                         className="labubu-preview"
                         style={{ left: '20%', bottom: '20%' }}
@@ -558,7 +561,7 @@ function App() {
                       return (
                         <img 
                           key={idx}
-                          src={`/assets/${fruit}.png`}
+                          src={`${baseUrl}assets/${fruit}.png`}
                           alt={fruit}
                           className="fruit-piece-preview"
                           style={{
@@ -573,7 +576,7 @@ function App() {
                 )}
                 {customDrink.toppings.includes('sprinkles') && (
                   <img 
-                    src="/assets/sprinkles.png" 
+                    src={`${baseUrl}assets/sprinkles.png`} 
                     alt="Sprinkles" 
                     className="sprinkles-topper-preview"
                   />
@@ -634,7 +637,7 @@ function App() {
                     </div>
                     <div className="labubu-preview-container">
                       <img 
-                        src="/assets/labubu_1.png" 
+                        src={`${baseUrl}assets/labubu_1.png`} 
                         alt="labubu" 
                         className="labubu-preview"
                       />
@@ -646,7 +649,7 @@ function App() {
                     {Array.from({ length: 6 }).map((_, idx) => (
                       <img 
                         key={idx}
-                        src={`/assets/${newlyUnlockedDrink.hasFruit}.png`}
+                        src={`${baseUrl}assets/${newlyUnlockedDrink.hasFruit}.png`}
                         alt={newlyUnlockedDrink.hasFruit}
                         className="fruit-piece-preview"
                         style={{
@@ -724,7 +727,7 @@ function App() {
                         </div>
                         <div className="labubu-preview-container">
                           <img 
-                            src="/assets/labubu_1.png" 
+                            src={`${baseUrl}assets/labubu_1.png`} 
                             alt="labubu" 
                             className="labubu-preview"
                           />
@@ -736,7 +739,7 @@ function App() {
                         {Array.from({ length: 6 }).map((_, idx) => (
                           <img 
                             key={idx}
-                            src={`/assets/${drink.hasFruit}.png`}
+                            src={`${baseUrl}assets/${drink.hasFruit}.png`}
                             alt={drink.hasFruit}
                             className="fruit-piece-preview"
                             style={{
@@ -776,14 +779,14 @@ function App() {
                           <div className="labubu-preview-container">
                             {customDrink.toppings.includes('labubu1') && (
                               <img 
-                                src="/assets/labubu_1.png" 
+                                src={`${baseUrl}assets/labubu_1.png`} 
                                 alt="labubu" 
                                 className="labubu-preview"
                               />
                             )}
                             {customDrink.toppings.includes('labubu2') && (
                               <img 
-                                src="/assets/labubu_2.png" 
+                                src={`${baseUrl}assets/labubu_2.png`} 
                                 alt="labubu" 
                                 className="labubu-preview"
                                 style={{ left: '60%' }}
@@ -791,7 +794,7 @@ function App() {
                             )}
                             {customDrink.toppings.includes('labubu3') && (
                               <img 
-                                src="/assets/labubu_3.png" 
+                                src={`${baseUrl}assets/labubu_3.png`} 
                                 alt="labubu" 
                                 className="labubu-preview"
                                 style={{ left: '30%' }}
@@ -809,7 +812,7 @@ function App() {
                               return (
                                 <img 
                                   key={idx}
-                                  src={`/assets/${fruit}.png`}
+                                  src={`${baseUrl}assets/${fruit}.png`}
                                   alt={fruit}
                                   className="fruit-piece-preview"
                                   style={{
@@ -993,21 +996,21 @@ function App() {
                   <div className="labubu-container">
                     {currentQuestion >= 3 && (
                       <img 
-                        src="/assets/labubu_1.png" 
+                        src={`${baseUrl}assets/labubu_1.png`} 
                         alt="labubu" 
                         className="labubu-img labubu-1"
                       />
                     )}
                     {currentQuestion >= 7 && (
                       <img 
-                        src="/assets/labubu_2.png" 
+                        src={`${baseUrl}assets/labubu_2.png`} 
                         alt="labubu" 
                         className="labubu-img labubu-2"
                       />
                     )}
                     {currentQuestion >= 10 && (
                       <img 
-                        src="/assets/labubu_3.png" 
+                        src={`${baseUrl}assets/labubu_3.png`} 
                         alt="labubu" 
                         className="labubu-img labubu-3"
                       />
@@ -1019,7 +1022,7 @@ function App() {
                     {Array.from({ length: currentQuestion }).map((_, idx) => (
                       <img 
                         key={idx}
-                        src={`/assets/${currentDrinkInfo.hasFruit}.png`}
+                        src={`${baseUrl}assets/${currentDrinkInfo.hasFruit}.png`}
                         alt={currentDrinkInfo.hasFruit}
                         className="fruit-piece"
                         style={{
@@ -1054,21 +1057,21 @@ function App() {
                       <div className="labubu-container">
                         {currentDrinkInfo.customData.toppings.includes('labubu1') && currentQuestion >= 3 && (
                           <img 
-                            src="/assets/labubu_1.png" 
+                            src={`${baseUrl}assets/labubu_1.png`} 
                             alt="labubu" 
                             className="labubu-img labubu-1"
                           />
                         )}
                         {currentDrinkInfo.customData.toppings.includes('labubu2') && currentQuestion >= 7 && (
                           <img 
-                            src="/assets/labubu_2.png" 
+                            src={`${baseUrl}assets/labubu_2.png`} 
                             alt="labubu" 
                             className="labubu-img labubu-2"
                           />
                         )}
                         {currentDrinkInfo.customData.toppings.includes('labubu3') && currentQuestion >= 10 && (
                           <img 
-                            src="/assets/labubu_3.png" 
+                            src={`${baseUrl}assets/labubu_3.png`} 
                             alt="labubu" 
                             className="labubu-img labubu-3"
                           />
@@ -1086,7 +1089,7 @@ function App() {
                           return (
                             <img 
                               key={idx}
-                              src={`/assets/${fruit}.png`}
+                              src={`${baseUrl}assets/${fruit}.png`}
                               alt={fruit}
                               className="fruit-piece"
                               style={{
@@ -1105,14 +1108,14 @@ function App() {
               <div className="cup-glass"></div>
               {currentDrinkInfo.hasLabubu && currentQuestion === 10 && (
                 <img 
-                  src="/assets/_dubai_chocolate.png" 
+                  src={`${baseUrl}assets/_dubai_chocolate.png`} 
                   alt="Dubai Chocolate Topper" 
                   className="cup-topper"
                 />
               )}
               {currentDrinkInfo.isCustom && currentDrinkInfo.customData?.toppings.includes('sprinkles') && currentQuestion === 10 && (
                 <img 
-                  src="/assets/sprinkles.png" 
+                  src={`${baseUrl}assets/sprinkles.png`} 
                   alt="Sprinkles Topper" 
                   className="cup-topper"
                 />
@@ -1167,7 +1170,7 @@ function App() {
                             </div>
                             <div className="labubu-preview-container">
                               <img 
-                                src="/assets/labubu_1.png" 
+                                src={`${baseUrl}assets/labubu_1.png`} 
                                 alt="labubu" 
                                 className="labubu-preview"
                               />
@@ -1179,7 +1182,7 @@ function App() {
                             {Array.from({ length: 6 }).map((_, idx) => (
                               <img 
                                 key={idx}
-                                src={`/assets/${selectedDrinks[currentDrink].hasFruit}.png`}
+                                src={`${baseUrl}assets/${selectedDrinks[currentDrink].hasFruit}.png`}
                                 alt={selectedDrinks[currentDrink].hasFruit}
                                 className="fruit-piece-preview"
                                 style={{
