@@ -604,7 +604,7 @@ function App() {
                 Cancel
               </button>
               <button className="save-button" onClick={saveCustomDrink}>
-                Save & Select
+                Save
               </button>
             </div>
           </div>
