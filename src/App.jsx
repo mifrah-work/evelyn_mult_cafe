@@ -201,8 +201,8 @@ function App() {
     // Set multiplication practice based on current day
     switch(currentDay) {
       case 1:
-        // Day 1: 4 times table, multipliers 1-6
-        num1 = 4
+        // Day 1: 3 times table, multipliers 1-6
+        num1 = 3
         num2 = Math.floor(Math.random() * 6) + 1
         break
       case 2:
