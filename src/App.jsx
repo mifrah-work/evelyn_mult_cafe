@@ -149,7 +149,7 @@ function App() {
     // Set volume based on track
     const getVolume = () => {
       if (selectedMusic === 'golden.mp3') return 0.15
-      if (selectedMusic === 'upbeat.mp3') return 0.15
+      if (selectedMusic === 'upbeat.mp3') return 0.09
       if (selectedMusic === 'espresso.mp3') return 0.15
       return 0.3
     }
