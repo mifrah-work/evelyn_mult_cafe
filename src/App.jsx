@@ -47,6 +47,11 @@ function App() {
       toppings: []
     }
   })
+  const [selectedMusic, setSelectedMusic] = useState(() => {
+    const saved = localStorage.getItem('multiplicationCafeSelectedMusic')
+    return saved ? saved : 'bg.mp3'
+  })
+  const [showMusicMenu, setShowMusicMenu] = useState(false)
 
   // Save to localStorage whenever completedDays changes
   useEffect(() => {
@@ -62,6 +67,11 @@ function App() {
   useEffect(() => {
     localStorage.setItem('multiplicationCafeCustomDrink', JSON.stringify(customDrink))
   }, [customDrink])
+
+  // Save to localStorage whenever selectedMusic changes
+  useEffect(() => {
+    localStorage.setItem('multiplicationCafeSelectedMusic', selectedMusic)
+  }, [selectedMusic])
 
   const restartWeek = () => {
     if (window.confirm('Are you sure you want to restart the week? All progress will be lost.')) {
@@ -131,25 +141,50 @@ function App() {
   const bgMusicRef = React.useRef(null)
   const endingMusicRef = React.useRef(null)
 
-  // Play background music when day starts
+  // Play background music on home, select drinks, and during playing (continuously across pages)
   useEffect(() => {
-    if (gameState === 'selectDrinks' || gameState === 'playing') {
+    const isActiveScreen = gameState === 'home' || gameState === 'selectDrinks' || gameState === 'playing'
+    const musicUrl = `${baseUrl}assets/${selectedMusic}`
+    
+    // Set volume based on track
+    const getVolume = () => {
+      if (selectedMusic === 'golden.mp3') return 0.15
+      if (selectedMusic === 'upbeat.mp3') return 0.15
+      if (selectedMusic === 'espresso.mp3') return 0.15
+      return 0.3
+    }
+    
+    if (isActiveScreen && selectedMusic !== 'none') {
       if (!bgMusicRef.current) {
-        bgMusicRef.current = new Audio(`${baseUrl}assets/bg.mp3`)
+        // Create audio element only once
+        bgMusicRef.current = new Audio()
         bgMusicRef.current.loop = true
-        bgMusicRef.current.volume = 0.3 // Quiet volume
       }
-      bgMusicRef.current.play().catch(err => console.log('Audio play failed:', err))
-    } else if (bgMusicRef.current) {
+      
+      // Check if we need to change the track
+      if (bgMusicRef.current.src !== musicUrl) {
+        bgMusicRef.current.pause()
+        bgMusicRef.current.src = musicUrl
+        bgMusicRef.current.volume = getVolume()
+        bgMusicRef.current.currentTime = 0
+        bgMusicRef.current.play().catch(err => console.log('Audio play failed:', err))
+      } else {
+        // Same track, just ensure it's playing with correct volume
+        bgMusicRef.current.volume = getVolume()
+        if (bgMusicRef.current.paused) {
+          bgMusicRef.current.play().catch(err => console.log('Audio play failed:', err))
+        }
+      }
+    } else if (selectedMusic === 'none' && bgMusicRef.current) {
+      bgMusicRef.current.pause()
+    } else if (!isActiveScreen && bgMusicRef.current) {
       bgMusicRef.current.pause()
     }
 
     return () => {
-      if (bgMusicRef.current) {
-        bgMusicRef.current.pause()
-      }
+      // Don't clean up - keep the ref alive
     }
-  }, [gameState])
+  }, [gameState, selectedMusic])
 
   // Play ending music when week is complete
   useEffect(() => {
@@ -664,9 +699,52 @@ function App() {
   }
 
   if (gameState === 'selectDrinks') {
+    const musicOptions = [
+      { file: 'none', label: 'No Music' },
+      { file: 'bg.mp3', label: 'Sleepy Cafe Music' },
+      { file: 'golden.mp3', label: 'Golden Instrumental' },
+      { file: 'upbeat.mp3', label: 'Upbeat Music' },
+      { file: 'espresso.mp3', label: 'Espresso' }
+    ]
+
     return (
       <div className="app home-screen">
         <button className="back-button-fixed" onClick={goHome}>← Back to Café</button>
+        
+        <div className="music-player-container">
+          <div className="music-player-wrapper">
+            <button 
+              className="music-player-button"
+              onClick={() => setShowMusicMenu(!showMusicMenu)}
+              title="Click to change background music"
+            >
+              <div className="music-player-disc">
+                <div className="disc-center"></div>
+              </div>
+              <div className="music-label">🎵</div>
+            </button>
+            
+            {showMusicMenu && (
+              <div className="music-menu">
+                <h3>Select Background Music</h3>
+                {musicOptions.map((option) => (
+                  <button
+                    key={option.file}
+                    className={`music-option ${selectedMusic === option.file ? 'active' : ''}`}
+                    onClick={() => {
+                      setSelectedMusic(option.file)
+                      setShowMusicMenu(false)
+                    }}
+                  >
+                    {selectedMusic === option.file && <span className="check-mark">✓</span>}
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
         <div className="drink-selection-screen">
           <h1>🍹 Day {currentDay} Menu 🍹</h1>
           <p className="selection-subtitle">Select 3 drinks to serve today ({selectedDrinks.length}/3)</p>
@@ -848,11 +926,54 @@ function App() {
   }
 
   if (gameState === 'home') {
+    const musicOptions = [
+      { file: 'none', label: 'No Music' },
+      { file: 'bg.mp3', label: 'Sleepy Cafe Music' },
+      { file: 'golden.mp3', label: 'Golden Instrumental' },
+      { file: 'upbeat.mp3', label: 'Upbeat Music' },
+      { file: 'espresso.mp3', label: 'Espresso' }
+    ]
+
     return (
       <div className="app home-screen">
         <button className="restart-week-button" onClick={restartWeek}>
           Restart Week
         </button>
+        
+        <div className="music-player-container">
+          <div className="music-player-wrapper">
+            <button 
+              className="music-player-button"
+              onClick={() => setShowMusicMenu(!showMusicMenu)}
+              title="Click to change background music"
+            >
+              <div className="music-player-disc">
+                <div className="disc-center"></div>
+              </div>
+              <div className="music-label">🎵</div>
+            </button>
+            
+            {showMusicMenu && (
+              <div className="music-menu">
+                <h3>Select Background Music</h3>
+                {musicOptions.map((option) => (
+                  <button
+                    key={option.file}
+                    className={`music-option ${selectedMusic === option.file ? 'active' : ''}`}
+                    onClick={() => {
+                      setSelectedMusic(option.file)
+                      setShowMusicMenu(false)
+                    }}
+                  >
+                    {selectedMusic === option.file && <span className="check-mark">✓</span>}
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
         <div className="cafe-header">
           <h1>☕ Evelyn's Multiplication Café ☕</h1>
           <p className="tagline">Serve drinks, practice multiplication!</p>
