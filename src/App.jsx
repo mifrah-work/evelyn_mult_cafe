@@ -194,56 +194,31 @@ function App() {
     }
   }, [gameState])
 
-  // Generate a new multiplication question based on current day
+  // Generate a new multiplication question based on current day and drink
   const generateQuestion = () => {
     let num1, num2
     
     // Set multiplication practice based on current day
-    switch(currentDay) {
-      case 1:
-        // Day 1: 3 times table, multipliers 1-6
+    if (currentDay === 1) {
+      // Day 1: 3 times table, multipliers 1-6
+      num1 = 3
+      num2 = Math.floor(Math.random() * 6) + 1
+    } else if (currentDay >= 2) {
+      // Days 2+: First drink is 3 times table, 2nd and 3rd drinks are mixed
+      if (currentDrink === 1) {
+        // First drink: 3 times table
         num1 = 3
-        num2 = Math.floor(Math.random() * 6) + 1
-        break
-      case 2:
-        // Day 2: 4 times table, multipliers 1-10
-        num1 = 4
         num2 = Math.floor(Math.random() * 10) + 1
-        break
-      case 3:
-        // Day 3: 4 times table, multipliers 1-10
-        num1 = 4
+      } else {
+        // Second and third drinks: Mixed 1, 2, 3, 10, 11, 0 times tables
+        const tablesMixed = [1, 2, 3, 10, 11, 0]
+        num1 = tablesMixed[Math.floor(Math.random() * tablesMixed.length)]
         num2 = Math.floor(Math.random() * 10) + 1
-        break
-      case 4:
-        // Day 4: 4 times table, multipliers 1-10
-        num1 = 4
-        num2 = Math.floor(Math.random() * 10) + 1
-        break
-      case 5:
-        // Day 5: 3 and 4 times tables (4 always first)
-        const tables = [3, 4]
-        num1 = tables[Math.floor(Math.random() * 2)]
-        num2 = Math.floor(Math.random() * 10) + 1
-        if (Math.random() < 0.5 && num1 === 3) {
-          // Swap to ensure 4 is first sometimes, but also practice 3
-          [num1, num2] = [num2, num1]
-        }
-        break
-      case 6:
-      case 7:
-        // Day 6 & 7: Tables 1, 2, 3, 4, 10, 11, 0 (4 always first)
-        const tablesDay67 = [1, 2, 3, 4, 10, 11, 0]
-        num1 = tablesDay67[Math.floor(Math.random() * tablesDay67.length)]
-        num2 = Math.floor(Math.random() * 10) + 1
-        // Prioritize 4 times table to be first
-        if (Math.random() < 0.3) {
-          num1 = 4
-        }
-        break
-      default:
-        num1 = 4
-        num2 = Math.floor(Math.random() * 10) + 1
+      }
+    } else {
+      // Fallback
+      num1 = 3
+      num2 = Math.floor(Math.random() * 10) + 1
     }
     
     const answer = num1 * num2
