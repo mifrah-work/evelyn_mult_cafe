@@ -16,6 +16,15 @@ function App() {
     const saved = localStorage.getItem('multiplicationCafeCompletedDays')
     return saved ? JSON.parse(saved) : []
   })
+  const [dayCompletionTimes, setDayCompletionTimes] = useState(() => {
+    const saved = localStorage.getItem('multiplicationCafeDayCompletionTimes')
+    return saved ? JSON.parse(saved) : {}
+  })
+  const [highestWeeklyRecord, setHighestWeeklyRecord] = useState(() => {
+    const saved = localStorage.getItem('multiplicationCafeHighestWeeklyRecord')
+    return saved ? parseInt(saved) : Infinity
+  })
+  const [showNewRecordNotification, setShowNewRecordNotification] = useState(false)
   const [lastWrongAnswer, setLastWrongAnswer] = useState(null)
   const [selectedDrinks, setSelectedDrinks] = useState([])
   const [unlockedDrinks, setUnlockedDrinks] = useState(() => {
@@ -52,6 +61,7 @@ function App() {
     return saved ? saved : 'bg.mp3'
   })
   const [showMusicMenu, setShowMusicMenu] = useState(false)
+  const [stopwatchTime, setStopwatchTime] = useState(0)
 
   // Save to localStorage whenever completedDays changes
   useEffect(() => {
@@ -72,6 +82,18 @@ function App() {
   useEffect(() => {
     localStorage.setItem('multiplicationCafeSelectedMusic', selectedMusic)
   }, [selectedMusic])
+
+  // Save to localStorage whenever dayCompletionTimes changes
+  useEffect(() => {
+    localStorage.setItem('multiplicationCafeDayCompletionTimes', JSON.stringify(dayCompletionTimes))
+  }, [dayCompletionTimes])
+
+  // Save to localStorage whenever highestWeeklyRecord changes
+  useEffect(() => {
+    if (highestWeeklyRecord !== Infinity) {
+      localStorage.setItem('multiplicationCafeHighestWeeklyRecord', highestWeeklyRecord.toString())
+    }
+  }, [highestWeeklyRecord])
 
   const restartWeek = () => {
     if (window.confirm('Are you sure you want to restart the week? All progress will be lost.')) {
@@ -233,26 +255,52 @@ function App() {
   const generateQuestion = () => {
     let num1, num2
     
-    // Set multiplication practice based on current day
+    // Set multiplication practice based on current day and drink order
     if (currentDay === 1) {
-      // Day 1: 3 times table, multipliers 1-6
-      num1 = 3
+      // Day 1: 4 times table, multipliers 1-4
+      num1 = 4
+      num2 = Math.floor(Math.random() * 4) + 1
+    } else if (currentDay === 2) {
+      // Day 2: 4 times table, multipliers 1-6
+      num1 = 4
       num2 = Math.floor(Math.random() * 6) + 1
-    } else if (currentDay >= 2) {
-      // Days 2+: First drink is 3 times table, 2nd and 3rd drinks are mixed
+    } else if (currentDay === 3) {
+      // Day 3: 4 times table, multipliers 6-9
+      num1 = 4
+      num2 = Math.floor(Math.random() * 4) + 6
+    } else if (currentDay === 4) {
+      // Day 4: 4 times table, multipliers 6-9
+      num1 = 4
+      num2 = Math.floor(Math.random() * 4) + 6
+    } else if (currentDay === 5) {
+      // Day 5: 4 times table, multipliers 4-9
+      num1 = 4
+      num2 = Math.floor(Math.random() * 6) + 4
+    } else if (currentDay === 6) {
+      // Day 6: First order is 4 times table (3-9), 2nd and 3rd are mixed 3 and 4 times tables
       if (currentDrink === 1) {
-        // First drink: 3 times table
-        num1 = 3
-        num2 = Math.floor(Math.random() * 10) + 1
+        // First order: 4 times table, multipliers 3-9
+        num1 = 4
+        num2 = Math.floor(Math.random() * 7) + 3
       } else {
-        // Second and third drinks: Mixed 1, 2, 3, 10, 11, 0 times tables
-        const tablesMixed = [1, 2, 3, 10, 11, 0]
-        num1 = tablesMixed[Math.floor(Math.random() * tablesMixed.length)]
-        num2 = Math.floor(Math.random() * 10) + 1
+        // Second and third orders: Mixed 3 or 4 times tables, multipliers 3-9
+        num1 = Math.random() < 0.5 ? 3 : 4
+        num2 = Math.floor(Math.random() * 7) + 3
+      }
+    } else if (currentDay === 7) {
+      // Day 7: First order is 4 times table (3-9), 2nd and 3rd are mixed 3 and 4 times tables
+      if (currentDrink === 1) {
+        // First order: 4 times table, multipliers 3-9
+        num1 = 4
+        num2 = Math.floor(Math.random() * 7) + 3
+      } else {
+        // Second and third orders: Mixed 3 or 4 times tables, multipliers 3-9
+        num1 = Math.random() < 0.5 ? 3 : 4
+        num2 = Math.floor(Math.random() * 7) + 3
       }
     } else {
       // Fallback
-      num1 = 3
+      num1 = 4
       num2 = Math.floor(Math.random() * 10) + 1
     }
     
@@ -271,9 +319,24 @@ function App() {
     }
   }, [gameState, currentQuestion])
 
+  // Stopwatch timer - runs only during active question answering
+  useEffect(() => {
+    let interval
+    // Only run when playing AND not on serve/close page (currentQuestion < 13)
+    if (gameState === 'playing' && currentQuestion < 13) {
+      interval = setInterval(() => {
+        setStopwatchTime(prev => prev + 1)
+      }, 1000)
+    }
+    return () => {
+      if (interval) clearInterval(interval)
+    }
+  }, [gameState, currentQuestion])
+
   const startDay = (day) => {
     setCurrentDay(day)
     setSelectedDrinks([])
+    setStopwatchTime(0)
     setGameState('selectDrinks')
   }
 
@@ -367,6 +430,11 @@ function App() {
           setGameState('weekComplete')
           if (!completedDays.includes(currentDay)) {
             setCompletedDays([...completedDays, currentDay])
+            // Save completion time for day 7
+            setDayCompletionTimes(prev => ({
+              ...prev,
+              [currentDay]: stopwatchTime
+            }))
           }
           return
         }
@@ -374,6 +442,32 @@ function App() {
         if (!completedDays.includes(currentDay)) {
           const newCompletedDays = [...completedDays, currentDay]
           setCompletedDays(newCompletedDays)
+          // Save completion time
+          setDayCompletionTimes(prev => ({
+            ...prev,
+            [currentDay]: stopwatchTime
+          }))
+          
+          // Check for new record (after day 1, and must be faster than all previous days)
+          const previousDayTimes = Object.keys(dayCompletionTimes)
+            .filter(day => parseInt(day) < currentDay)
+            .map(day => dayCompletionTimes[day])
+          
+          const fastestPreviousTime = previousDayTimes.length > 0 
+            ? Math.min(...previousDayTimes) 
+            : Infinity
+          
+          if (currentDay > 1 && stopwatchTime < fastestPreviousTime) {
+            setHighestWeeklyRecord(stopwatchTime)
+            setShowNewRecordNotification(true)
+            // Play win sound
+            const audio = new Audio(`${baseUrl}win.mp3`)
+            audio.volume = 0.3
+            audio.play().catch(() => {})
+          } else if (currentDay === 1) {
+            // Set first day as the initial record
+            setHighestWeeklyRecord(stopwatchTime)
+          }
           
           // Check if we unlocked a new drink
           const drinkToUnlock = drinks.find(d => d.unlockDay === currentDay)
@@ -392,10 +486,17 @@ function App() {
   const goHome = () => {
     setGameState('home')
     setFeedback('')
+    setShowNewRecordNotification(false)
+  }
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
   const continueAfterUnlock = () => {
-    setGameState('dayComplete')
+    setGameState('home')
   }
 
   const saveCustomDrink = () => {
@@ -980,6 +1081,25 @@ function App() {
         </div>
         <div className="days-container">
           <h2>Choose Your Day</h2>
+          {showNewRecordNotification && (
+            <div className="new-record-notification">
+              <div className="record-confetti">
+                {[...Array(50)].map((_, i) => (
+                  <span 
+                    key={i} 
+                    className="confetti-piece"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      '--x': `${(Math.random() - 0.5) * 200}px`,
+                      '--delay': `${Math.random() * 0.5}s`,
+                      animationDelay: `${Math.random() * 0.5}s`
+                    }}
+                  ></span>
+                ))}
+              </div>
+              <h3>🎉 You beat your highest record! 🎉</h3>
+            </div>
+          )}
           <div className="days-grid">
             {[1, 2, 3, 4, 5, 6, 7].map(day => {
               const isLocked = day > 1 && !completedDays.includes(day - 1)
@@ -994,9 +1114,15 @@ function App() {
                   <div className="day-number">
                     {isLocked ? '🔒' : isCompleted ? '✓' : ''} Day {day}
                   </div>
-                  <div className="day-subtitle">
-                    {isLocked ? 'Complete Day ' + (day - 1) : '3 Drinks to Serve'}
-                  </div>
+                  {isCompleted && dayCompletionTimes[day] ? (
+                    <div className="day-completion-time">
+                      Time to serve 3 drinks: {formatTime(dayCompletionTimes[day])}
+                    </div>
+                  ) : (
+                    <div className="day-subtitle">
+                      {isLocked ? 'Complete Day ' + (day - 1) : '3 Drinks to Serve'}
+                    </div>
+                  )}
                 </button>
               )
             })}
@@ -1006,19 +1132,7 @@ function App() {
     )
   }
 
-  if (gameState === 'dayComplete') {
-    return (
-      <div className="app home-screen">
-        <div className="complete-screen">
-          <h1>🎉 Day {currentDay} Complete! 🎉</h1>
-          <p>You've successfully served all 3 drinks!</p>
-          <button className="home-button" onClick={goHome}>
-            Return to Café
-          </button>
-        </div>
-      </div>
-    )
-  }
+
 
   if (gameState === 'weekComplete') {
     return (
@@ -1144,6 +1258,12 @@ function App() {
     <div className="app game-screen">
       <div className="game-header">
         <button className="back-button" onClick={goHome}>← Back to Café</button>
+        <div className="stopwatch">
+          <span className="stopwatch-label">⏱</span>
+          <span className="stopwatch-time">
+            {Math.floor(stopwatchTime / 60)}:{(stopwatchTime % 60).toString().padStart(2, '0')}
+          </span>
+        </div>
         <div className="progress-info">
           <span>Day {currentDay}</span>
           <span className="separator">•</span>

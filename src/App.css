@@ -233,6 +233,12 @@
   color: #D4A574;
 }
 
+.day-completion-time {
+  font-size: 0.9rem;
+  color: #FFD700;
+  font-weight: 600;
+}
+
 /* GAME SCREEN */
 .game-screen {
   background: linear-gradient(135deg, #1A1A1D 0%, #2D2D30 100%);
@@ -246,6 +252,15 @@
   padding: 1.5rem 2rem;
   background: rgba(0,0,0,0.3);
   border-bottom: 2px solid #8B7355;
+  gap: 2rem;
+}
+
+.header-center {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  flex: 1;
+  justify-content: center;
 }
 
 .back-button {
@@ -257,6 +272,7 @@
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .back-button:hover {
@@ -270,10 +286,34 @@
   font-size: 1.2rem;
   font-weight: bold;
   color: #FFD700;
+  white-space: nowrap;
 }
 
 .separator {
   color: #8B7355;
+}
+
+.stopwatch {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.5rem;
+  color: #FFD700;
+  font-weight: bold;
+  background: rgba(139, 115, 85, 0.3);
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  border: 2px solid #8B7355;
+}
+
+.stopwatch-label {
+  font-size: 1.8rem;
+}
+
+.stopwatch-time {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+  min-width: 60px;
 }
 
 /* GAME CONTENT */
@@ -1666,6 +1706,54 @@ form {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes confettiFall {
+  to {
+    transform: translateY(200px) translateX(var(--x)) rotateZ(360deg);
+    opacity: 0;
+  }
+}
+
+.new-record-notification {
+  position: relative;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  border: 2px solid #FF6347;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  margin: 0.5rem 0 1rem 0;
+  text-align: center;
+  animation: popupBounce 0.6s ease-out;
+  box-shadow: 0 6px 15px rgba(255, 105, 180, 0.3);
+  overflow: hidden;
+}
+
+.new-record-notification h3 {
+  margin: 0;
+  color: #FF1493;
+  font-size: 1.2rem;
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+  z-index: 10;
+  position: relative;
+}
+
+.record-confetti {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: linear-gradient(45deg, #FF1493, #FFD700, #FF6347, #00CED1);
+  animation: confettiFall 2s ease-in forwards;
+  top: 0;
+  border-radius: 50%;
 }
 
 .music-menu h3 {
