@@ -253,59 +253,36 @@ function App() {
 
   // Generate a new multiplication question based on current day and drink
   const generateQuestion = () => {
-    let num1, num2
-    
+    let num1, num2;
     // Set multiplication practice based on current day and drink order
-    if (currentDay === 1) {
-      // Day 1: 4 times table, multipliers 1-4
-      num1 = 4
-      num2 = Math.floor(Math.random() * 4) + 1
-    } else if (currentDay === 2) {
-      // Day 2: 4 times table, multipliers 1-6
-      num1 = 4
-      num2 = Math.floor(Math.random() * 6) + 1
-    } else if (currentDay === 3) {
-      // Day 3: 4 times table, multipliers 6-9
-      num1 = 4
-      num2 = Math.floor(Math.random() * 4) + 6
-    } else if (currentDay === 4) {
-      // Day 4: 4 times table, multipliers 6-9
-      num1 = 4
-      num2 = Math.floor(Math.random() * 4) + 6
-    } else if (currentDay === 5) {
-      // Day 5: 4 times table, multipliers 4-9
-      num1 = 4
-      num2 = Math.floor(Math.random() * 6) + 4
-    } else if (currentDay === 6) {
-      // Day 6: First order is 4 times table (3-9), 2nd and 3rd are mixed 3 and 4 times tables
-      if (currentDrink === 1) {
-        // First order: 4 times table, multipliers 3-9
-        num1 = 4
-        num2 = Math.floor(Math.random() * 7) + 3
+    if ([1,2,3,4].includes(currentDay)) {
+      if (currentDrink === 3) {
+        // 3rd order: 3 times table, multipliers 3-9
+        num1 = 3;
+        num2 = Math.floor(Math.random() * 7) + 3;
       } else {
-        // Second and third orders: Mixed 3 or 4 times tables, multipliers 3-9
-        num1 = Math.random() < 0.5 ? 3 : 4
-        num2 = Math.floor(Math.random() * 7) + 3
+        // 1st and 2nd order: 4 times table, multipliers 3-9
+        num1 = 4;
+        num2 = Math.floor(Math.random() * 7) + 3;
       }
-    } else if (currentDay === 7) {
-      // Day 7: First order is 4 times table (3-9), 2nd and 3rd are mixed 3 and 4 times tables
-      if (currentDrink === 1) {
-        // First order: 4 times table, multipliers 3-9
-        num1 = 4
-        num2 = Math.floor(Math.random() * 7) + 3
+    } else if ([5,6,7].includes(currentDay)) {
+      if (currentDrink === 3) {
+        // 3rd order: 3 times table, multipliers 3-9
+        num1 = 3;
+        num2 = Math.floor(Math.random() * 7) + 3;
       } else {
-        // Second and third orders: Mixed 3 or 4 times tables, multipliers 3-9
-        num1 = Math.random() < 0.5 ? 3 : 4
-        num2 = Math.floor(Math.random() * 7) + 3
+        // 1st and 2nd order: 4 times table, multipliers 1-9
+        num1 = 4;
+        num2 = Math.floor(Math.random() * 9) + 1;
       }
     } else {
       // Fallback
-      num1 = 4
-      num2 = Math.floor(Math.random() * 10) + 1
+      num1 = 4;
+      num2 = Math.floor(Math.random() * 9) + 1;
     }
-    
-    const answer = num1 * num2
-    setQuestion({ num1, num2, answer })
+
+    const answer = num1 * num2;
+    setQuestion({ num1, num2, answer });
   }
 
   useEffect(() => {
