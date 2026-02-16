@@ -62,6 +62,8 @@ function App() {
   })
   const [showMusicMenu, setShowMusicMenu] = useState(false)
   const [stopwatchTime, setStopwatchTime] = useState(0)
+  const [questionPool, setQuestionPool] = useState([])
+  const [poolIndex, setPoolIndex] = useState(0)
 
   // Save to localStorage whenever completedDays changes
   useEffect(() => {
@@ -251,43 +253,77 @@ function App() {
     }
   }, [gameState])
 
-  // Generate a new multiplication question based on current day and drink
-  const generateQuestion = () => {
-    let num1, num2;
-    // Set multiplication practice based on current day and drink order
-    if ([1,2,3,4].includes(currentDay)) {
-      if (currentDrink === 3) {
-        // 3rd order: 3 times table, multipliers 3-9
-        num1 = 3;
-        num2 = Math.floor(Math.random() * 7) + 3;
-      } else {
-        // 1st and 2nd order: 4 times table, multipliers 3-9
-        num1 = 4;
-        num2 = Math.floor(Math.random() * 7) + 3;
-      }
-    } else if ([5,6,7].includes(currentDay)) {
-      if (currentDrink === 3) {
-        // 3rd order: 3 times table, multipliers 3-9
-        num1 = 3;
-        num2 = Math.floor(Math.random() * 7) + 3;
-      } else {
-        // 1st and 2nd order: 4 times table, multipliers 1-9
-        num1 = 4;
-        num2 = Math.floor(Math.random() * 9) + 1;
-      }
-    } else {
-      // Fallback
-      num1 = 4;
-      num2 = Math.floor(Math.random() * 9) + 1;
+  // Generate a pool of questions based on current day and drink with weighted distribution
+  const generateQuestionPool = () => {
+    const pool = [];
+    const totalQuestions = 13;
+    
+    // 30% from times tables 0, 1, 2, 10, 11
+    const easyQuestionsCount = Math.floor(totalQuestions * 0.3);
+    const easyMultipliers = [0, 1, 2, 10, 11];
+    
+    // 70% from times tables 3 & 4 with multipliers 3-9
+    const hardQuestionsCount = totalQuestions - easyQuestionsCount;
+    const hardTimeTables = [3, 4];
+    const hardMultipliers = [3, 4, 5, 6, 7, 8, 9];
+    
+    // Add easy questions
+    for (let i = 0; i < easyQuestionsCount; i++) {
+      const num1 = easyMultipliers[Math.floor(Math.random() * easyMultipliers.length)];
+      const num2 = Math.floor(Math.random() * 10) + 1; // Multiplier 1-10
+      pool.push({
+        num1,
+        num2,
+        answer: num1 * num2
+      });
     }
-
-    const answer = num1 * num2;
-    setQuestion({ num1, num2, answer });
+    
+    // Add hard questions (70%)
+    for (let i = 0; i < hardQuestionsCount; i++) {
+      const num1 = hardTimeTables[Math.floor(Math.random() * hardTimeTables.length)];
+      const num2 = hardMultipliers[Math.floor(Math.random() * hardMultipliers.length)];
+      pool.push({
+        num1,
+        num2,
+        answer: num1 * num2
+      });
+    }
+    
+    // Shuffle the pool
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    
+    return pool;
   }
+
+  // Generate a new multiplication question from the pool
+  const generateQuestion = () => {
+    if (poolIndex < questionPool.length) {
+      const question = questionPool[poolIndex];
+      setQuestion(question);
+    }
+  }
+
+  // Initialize or reset question pool when starting a new game or question
 
   useEffect(() => {
     if (gameState === 'playing') {
-      generateQuestion()
+      // Generate a new pool when starting the game
+      if (currentQuestion === 1) {
+        const newPool = generateQuestionPool();
+        setQuestionPool(newPool);
+        setPoolIndex(0);
+        if (newPool.length > 0) {
+          setQuestion(newPool[0]);
+        }
+      } else {
+        // Draw next question from existing pool
+        if (poolIndex < questionPool.length) {
+          setQuestion(questionPool[poolIndex]);
+        }
+      }
       // Focus input after question changes
       setTimeout(() => {
         const input = document.querySelector('.answer-input')
@@ -320,6 +356,8 @@ function App() {
   const startGameWithDrinks = () => {
     setCurrentDrink(1)
     setCurrentQuestion(1)
+    setPoolIndex(0)
+    setQuestionPool([])
     setAnswer('')
     setFeedback('')
     setLastWrongAnswer(null)
@@ -379,6 +417,7 @@ function App() {
       if (currentQuestion < 13) {
         setTimeout(() => {
           setCurrentQuestion(currentQuestion + 1)
+          setPoolIndex(poolIndex + 1)
           setFeedback('')
         }, 500)
       } else {
@@ -397,6 +436,8 @@ function App() {
       if (currentDrink < 3) {
         setCurrentDrink(currentDrink + 1)
         setCurrentQuestion(1)
+        setPoolIndex(0)
+        setQuestionPool([])
         setAnswer('')
         setFeedback('')
         setLastWrongAnswer(null)
